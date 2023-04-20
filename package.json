@@ -1,0 +1,25 @@
+{
+  "dependencies": {
+    "axios": "^1.3.6",
+    "correios-brasil": "^3.0.4",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "joi": "^17.9.1",
+    "mercadopago": "^1.5.15",
+    "mongodb": "^5.3.0",
+    "nodemon": "^2.0.22"
+  },
+  "name": "lojaanimaback",
+  "type": "module",
+  "version": "1.0.0",
+  "main": "src/app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon src/app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
