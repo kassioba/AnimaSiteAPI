@@ -30,6 +30,12 @@ mongoClient
 //   // "APP_USR-5557399308464316-041016-eadbe9e869c89e1fb57f6405c5255f3f-156684876",
 // });
 
+const config = {
+  headers: {
+    Authorization:
+      "Bearer TEST-5557399308464316-041016-176a60778d427c5ec00522b0ff39e948-156684876",
+  },
+};
 
 app.get("/", async (req, res) =>
   res.send(await db.collection("produtos").find().toArray())
@@ -131,12 +137,7 @@ app.post("/pagamento", async (req, res) => {
           notification_url: "https://animasiteapi.onrender.com/webhooks",
         },
       ],
-      {
-        headers: {
-          Authorization:
-            "Bearer TEST-5557399308464316-041016-176a60778d427c5ec00522b0ff39e948-156684876",
-        },
-      }
+      config
     )
     .then((resp) => res.send(resp.data.init_point))
     .catch((err) => {
@@ -145,8 +146,13 @@ app.post("/pagamento", async (req, res) => {
 });
 
 app.post("/webhooks", async (req, res) => {
-  console.log("recebeu webhook");
   console.log(req.body);
+
+  axios
+    .get(`https://api.mercadopago.com/v1/payments/${req.body.data.id}`, config)
+    .then((res) => console.log(res.data))
+    .catch((err) => console.log("Get falhou"));
+
   res.sendStatus(200);
 });
 
