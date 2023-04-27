@@ -146,14 +146,16 @@ app.post("/pagamento", async (req, res) => {
 });
 
 app.post("/webhooks", (req, res) => {
-  if (req.body.data.id) {
-    axios
-      .get(
-        `https://api.mercadopago.com/v1/payments/${req.body.data.id}`,
-        config
-      )
-      .then((res) => console.log(res.data))
-      .catch((err) => console.log("Get falhou"));
+  if (req.body.data) {
+    if (req.body.data.id) {
+      axios
+        .get(
+          `https://api.mercadopago.com/v1/payments/${req.body.data.id}`,
+          config
+        )
+        .then((res) => console.log(res.data))
+        .catch((err) => console.log("Get falhou"));
+    }
   }
   res.sendStatus(200);
 });
