@@ -30,155 +30,224 @@ mongoClient
 //   // "APP_USR-5557399308464316-041016-eadbe9e869c89e1fb57f6405c5255f3f-156684876",
 // });
 
-app.post('/', async (req, res) =>{
-  const produtos = req.body
-  
+
+app.get("/", async (req, res) =>
+  res.send(await db.collection("produtos").find().toArray())
+);
+
+app.get("/estoque/:nome", async (req, res) => {
+  const nome = req.params.nome;
+
+  let quantidade = 0;
+  let tamanhos = [];
+
+  const itens = await db.collection("estoque").find({ nome: nome }).toArray();
+
+  for (let i = 0; i < itens.length; i++) {
+    quantidade += itens[i].estoque;
+    if (itens[i].estoque > 0) {
+      tamanhos.push(itens[i].tamanho);
+    }
+  }
+
+  if (!tamanhos[0]) tamanhos = "Tamanho único";
+
+  res.send({ nome: nome, estoque: quantidade, tamanhosDisponiveis: tamanhos });
+});
+
+app.get("/produtos/:id", async (req, res) => {
+  const { id } = req.params;
+
+  res.send(await db.collection("produtos").findOne({ _id: new ObjectId(id) }));
+});
+
+app.post("/correios", async (req, res) => {
+  const cep = req.body.cep;
+  // body recebe apenas cep de destino
+
+  let args = {
+    // Não se preocupe com a formatação dos valores de entrada do cep, qualquer uma será válida (ex: 21770-200, 21770 200, 21asa!770@###200 e etc),
+    sCepOrigem: "52050480",
+    sCepDestino: cep,
+    nVlPeso: "1",
+    nCdFormato: "1",
+    nVlComprimento: "42",
+    nVlAltura: "30",
+    nVlLargura: "10",
+    nCdServico: ["04510", "04014"], //Array com os códigos de serviço
+    nVlDiametro: "0",
+  };
+
+  try {
+    res.send(await calcularPrecoPrazo(args));
+  } catch (err) {
+    return res.send(err.message);
+  }
+});
+
+app.post("/pagamento", async (req, res) => {
+  const carrinho = req.body.carrinho;
+  const comprador = req.body.comprador;
+  let frete = req.body.frete;
+
+  if (!frete) frete = 0;
+
+  const carrinhoSchema = joi.object({
+    title: joi.string().required(),
+    unit_price: joi.number().required(),
+    quantity: joi.number().required(),
+  });
+
+  for (let i = 0; i < carrinho.length; i++) {
+    const validacao = carrinhoSchema.validate(carrinho[i], {
+      abortEarly: false,
+    });
+
+    if (validacao.error) {
+      const erros = validacao.error.details.map((err) => err.message);
+      return res.status(422).send(erros);
+    }
+  }
+
+  axios
+    .post(
+      "https://api.mercadopago.com/checkout/preferences",
+      [
+        {
+          items: carrinho,
+          back_urls: {
+            success: "http://localhost:3000/sucesso",
+            failure: "http://localhost:3000/",
+            pending: "http://localhost:3000/sucesso",
+          },
+          auto_return: "approved",
+          payment_methods: {
+            installments: 1,
+          },
+          shipments: {
+            cost: frete,
+          },
+          payer: comprador,
+          notification_url: "https://animasiteapi.onrender.com/webhooks",
+        },
+      ],
+      {
+        headers: {
+          Authorization:
+            "Bearer TEST-5557399308464316-041016-176a60778d427c5ec00522b0ff39e948-156684876",
+        },
+      }
+    )
+    .then((resp) => res.send(resp.data.init_point))
+    .catch((err) => {
+      return res.status(500).send(err);
+    });
+});
+
+app.post("/webhooks", async (req, res) => {
+  console.log("recebeu webhook");
+  console.log(req.body);
+  res.sendStatus(200);
+});
+
+app.post("/dados-comprador", async (req, res) => {
+  const dadosComprador = req.body;
+
+  const dadosCompradorSchema = joi.object({
+    name: joi.string().required(),
+    email: joi.string().email().required(),
+    address: joi
+      .object({
+        zip_code: joi.number().required(),
+        street_name: joi.string().required(),
+      })
+      .required(),
+  });
+
+  const validacao = dadosCompradorSchema.validate(dadosComprador, {
+    abortEarly: false,
+  });
+
+  if (validacao.error) {
+    const erros = validacao.error.details.map((err) => err.message);
+    return res.status(422).send(erros);
+  }
+
+  try {
+    await db.collection("comprador").insertOne(dadosComprador);
+    return res.sendStatus(201);
+  } catch (err) {
+    return res.status(500).send(err.message);
+  }
+});
+
+// rotas de teste
+
+app.post("/", async (req, res) => {
+  const produtos = req.body;
+
   const produtoSchema = joi.object({
     nome: joi.string().required(),
     preco: joi.number().required(),
     img: joi.string().required(),
     alt: joi.string().required(),
     descricao: joi.string().required(),
-    tamanho:joi.string().valid('P', 'M', 'G', 'GG', 'XG'),
-  })
+    tamanho: joi.string().valid("P", "M", "G", "GG", "XG"),
+  });
 
-  for(let i = 0; i < produtos.length; i++) {
+  for (let i = 0; i < produtos.length; i++) {
     const validation = produtoSchema.validate(produtos[i]);
 
-    if(validation.error){
-      return res.status(422).send('Formato do produto inválido')
+    if (validation.error) {
+      return res.status(422).send("Formato do produto inválido");
     }
   }
 
-  try{
-   await db.collection('produtos').insertMany(produtos)
-  }catch(err){
-    return res.status(500).send(err.message)
+  try {
+    await db.collection("produtos").insertMany(produtos);
+  } catch (err) {
+    return res.status(500).send(err.message);
   }
 
-
-  res.sendStatus(201)
+  res.sendStatus(201);
 });
 
-app.get('/', async (req, res) => res.send(await db.collection('produtos').find().toArray()))
+app.post("/estoque", async (req, res) => {
+  const produtos = req.body;
 
-app.post('/estoque', async (req, res) =>{
-  const produtos = req.body
-  
   const produtoSchema = joi.object({
     nome: joi.string().required(),
-    tamanho:joi.string().valid('P', 'M', 'G', 'GG', 'XG'),
+    tamanho: joi.string().valid("P", "M", "G", "GG", "XG"),
     estoque: joi.number().required(),
-  })
+  });
 
-  for(let i = 0; i < produtos.length; i++) {
+  for (let i = 0; i < produtos.length; i++) {
     const validation = produtoSchema.validate(produtos[i]);
 
-    if(validation.error){
-      return res.status(422).send('Formato do produto inválido')
+    if (validation.error) {
+      return res.status(422).send("Formato do produto inválido");
     }
   }
 
-  try{
-   await db.collection('estoque').insertMany(produtos)
-  }catch(err){
-    return res.status(500).send(err.message)
+  try {
+    await db.collection("estoque").insertMany(produtos);
+  } catch (err) {
+    return res.status(500).send(err.message);
   }
 
+  res.sendStatus(201);
+});
 
-  res.sendStatus(201)
-})
+app.post("/attEstoque", async (req, res) => {
+  await db
+    .collection("estoque")
+    .updateOne({ tamanho: "P" }, { $set: { estoque: 0 } });
+  res.send("editado");
+});
 
-app.get('/estoque/:nome', async (req, res) => {
-  const nome = req.params.nome
-
-  let quantidade = 0;
-  let tamanhos = []
-
-  const itens = await db.collection('estoque').find({nome: nome}).toArray()
-
-  for(let i = 0; i < itens.length; i++){
-    quantidade += itens[i].estoque
-    if(itens[i].estoque > 0){
-    tamanhos.push(itens[i].tamanho)
-  }
-}
-
-if(!tamanhos[0]) tamanhos = 'Tamanho único'
-
-  res.send({nome: nome, estoque: quantidade, tamanhosDisponiveis: tamanhos})
-})
-
-app.post('/attEstoque', async (req, res) =>{
-  await db.collection('estoque').updateOne({tamanho: 'P'}, {$set: {estoque: 0}})
-  res.send('editado')
-})
-
-app.get('/produtos/:id', async (req, res) =>{
-  const {id} = req.params
-
-  res.send(await db.collection('produtos').findOne({_id: new ObjectId(id)}))
-})
-
-app.post('/correios', async (req, res) =>{
-
-  // body recebe apenas cep de destino
-
-  let args = {
-    // Não se preocupe com a formatação dos valores de entrada do cep, qualquer uma será válida (ex: 21770-200, 21770 200, 21asa!770@###200 e etc),
-    sCepOrigem: '52050480',
-    sCepDestino: '05432020',
-    nVlPeso: '1',
-    nCdFormato: '1',
-    nVlComprimento: '42',
-    nVlAltura: '30',
-    nVlLargura: '10',
-    nCdServico: ['04014', '04510'], //Array com os códigos de serviço
-    nVlDiametro: '0',
-  };
-  
-  try{
-  res.send(await calcularPrecoPrazo(args))
-}catch(err){
-  return res.send(err.message)
-}
-
-})
-
-app.post('/pagamento', async (req,res) => {
-  const carrinho = req.body
-
-  axios.post(
-    "https://api.mercadopago.com/checkout/preferences",
-    [
-      {
-        items: carrinho,
-        back_urls: {
-          success: "http://localhost:3000/sucesso",
-          failure: "http://localhost:3000/teste",
-          pending: "http://localhost:3000/sucesso",
-        },
-        auto_return: "approved",
-        payment_methods: {
-          installments: 1,
-        },
-        shipments: {
-          cost: 10,
-        },
-      },
-    ],
-    {
-      headers: {
-        Authorization:
-          "Bearer TEST-5557399308464316-041016-176a60778d427c5ec00522b0ff39e948-156684876",
-      },
-    }
-  ).then(resp => {
-    console.log(resp.data.init_point)
-    res.send(resp.data.init_point)
-  })
-  .catch(err => {return res.status(500).send(err)})
-})
+app.delete("/dados-comprador", async (req, res) =>
+  res.send(await db.collection("comprador").deleteMany({}))
+);
 
 app.delete('/sucesso', async (req, res) => {
   try{
