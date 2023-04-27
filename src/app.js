@@ -145,7 +145,7 @@ app.post("/pagamento", async (req, res) => {
     });
 });
 
-app.post("/webhooks", async (req, res) => {
+app.post("/webhooks", (req, res) => {
   if (req.body.data.id) {
     axios
       .get(
