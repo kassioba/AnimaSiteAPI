@@ -24,11 +24,8 @@ mongoClient
   .then(() => (db = mongoClient.db()))
   .catch((err) => console.log(err.message));
 
-// mercadopago.configure({
-//   access_token:
-//     "TEST-5557399308464316-041016-176a60778d427c5ec00522b0ff39e948-156684876",
-//   // "APP_USR-5557399308464316-041016-eadbe9e869c89e1fb57f6405c5255f3f-156684876",
-// });
+// Token Sandbox:  "TEST-5557399308464316-041016-176a60778d427c5ec00522b0ff39e948-156684876"
+// Token Produção: "APP_USR-5557399308464316-041016-eadbe9e869c89e1fb57f6405c5255f3f-156684876"
 
 const config = {
   headers: {
@@ -145,7 +142,40 @@ app.post("/pagamento", async (req, res) => {
     });
 });
 
+// app.post("/dados-comprador", async (req, res) => {
+//   const dadosComprador = req.body;
+
+//   const dadosCompradorSchema = joi.object({
+//     name: joi.string().required(),
+//     email: joi.string().email().required(),
+//     address: joi
+//       .object({
+//         zip_code: joi.number().required(),
+//         street_name: joi.string().required(),
+//       })
+//       .required(),
+//   });
+
+//   const validacao = dadosCompradorSchema.validate(dadosComprador, {
+//     abortEarly: false,
+//   });
+
+//   if (validacao.error) {
+//     const erros = validacao.error.details.map((err) => err.message);
+//     return res.status(422).send(erros);
+//   }
+
+//   try {
+//     await db.collection("comprador").insertOne(dadosComprador);
+//     return res.sendStatus(201);
+//   } catch (err) {
+//     return res.status(500).send(err.message);
+//   }
+// });
+
 app.post("/webhooks", (req, res) => {
+  console.log(req.body)
+  
   if (req.body.data) {
     if (req.body.data.id) {
       axios
@@ -153,45 +183,19 @@ app.post("/webhooks", (req, res) => {
           `https://api.mercadopago.com/v1/payments/${req.body.data.id}`,
           config
         )
-        .then((res) => console.log(res.data))
+        .then((res) => {
+          console.log(res.data.status)
+          console.log(res.data.additional_info.payer.address)
+        })
         .catch((err) => console.log("Get falhou"));
     }
   }
   res.sendStatus(200);
 });
 
-app.post("/dados-comprador", async (req, res) => {
-  const dadosComprador = req.body;
-
-  const dadosCompradorSchema = joi.object({
-    name: joi.string().required(),
-    email: joi.string().email().required(),
-    address: joi
-      .object({
-        zip_code: joi.number().required(),
-        street_name: joi.string().required(),
-      })
-      .required(),
-  });
-
-  const validacao = dadosCompradorSchema.validate(dadosComprador, {
-    abortEarly: false,
-  });
-
-  if (validacao.error) {
-    const erros = validacao.error.details.map((err) => err.message);
-    return res.status(422).send(erros);
-  }
-
-  try {
-    await db.collection("comprador").insertOne(dadosComprador);
-    return res.sendStatus(201);
-  } catch (err) {
-    return res.status(500).send(err.message);
-  }
-});
 
 // rotas de teste
+
 
 app.post("/", async (req, res) => {
   const produtos = req.body;
