@@ -1,4 +1,4 @@
-import { notFoundError } from "../errors/notFoundError";
+import { notFoundError } from "../errors/notFound.error";
 import { findProductById, findProducts } from "../repositories/products.reposity";
 
 export async function getAllProducts() {
