@@ -1,5 +1,5 @@
 import { db } from "../app";
-import { notFoundError } from "../errors/notFoundError";
+import { notFoundError } from "../errors/notFound.error";
 import { findStockByProductId } from "../repositories/stock.repository";
 
 export async function getStockByProductId(productId: number) {
