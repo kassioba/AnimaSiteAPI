@@ -1,26 +1,37 @@
 {
   "dependencies": {
+    "@prisma/client": "^5.3.1",
+    "@types/cors": "^2.8.14",
+    "@types/express": "^4.17.18",
+    "@types/http-status": "^1.1.2",
+    "@types/joi": "^17.2.3",
     "axios": "^1.3.6",
-    "correios-brasil": "^3.0.4",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
-    "joi": "^17.9.1",
+    "http-status": "^1.7.0",
+    "joi": "^17.10.2",
     "mercadopago": "^1.5.15",
     "mongodb": "^5.3.0",
-    "nodemon": "^2.0.22"
+    "nodemon": "^2.0.22",
+    "postgres": "^3.3.5"
   },
   "name": "lojaanimaback",
-  "type": "module",
   "version": "1.0.0",
-  "main": "src/app.js",
+  "main": "src/app.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node src/app.js",
-    "dev": "nodemon src/app.js"
+    "start": "node src/app.ts",
+    "dev": "nodemon src/app.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "devDependencies": {
+    "@types/node": "^20.7.0",
+    "prisma": "^5.3.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.2"
+  }
 }
