@@ -28,6 +28,7 @@ model Stock{
   Product     Product  @relation(fields: [product_id], references: [id])
   size        Size
   quantity    Int
+  Order       Order[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -39,4 +40,39 @@ enum Size{
   GG
   XG
   NA
+}
+
+model Customer{
+  id          Int      @id @default(autoincrement())
+  Order       Order?
+  Adress      Adress?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Order{
+  id            Int      @id @default(autoincrement())
+  customer_id   Int      @unique
+  Customer      Customer @relation(fields: [customer_id], references: [id])
+  stock_id      Int
+  Stock         Stock    @relation(fields: [stock_id], references: [id])
+  quantity      Int
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+	@@map("CustomerOrder")
+}
+
+model Adress{
+  id            Int      @id @default(autoincrement())
+  customer_id   Int      @unique
+  customer      Customer @relation(fields: [customer_id], references: [id])
+  street        String
+  number        String
+  complement    String
+  neighborhood  String
+  city          String
+  state_code    String
+  postal_code   String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }

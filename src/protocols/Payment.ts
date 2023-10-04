@@ -1,20 +1,40 @@
 export type Payment = {
     cart: Cart[]
     customer: Customer
-    shipping_price?: number
+    address: Address
+    card: Card
+    shipping?: Omit<Cart, "quantity">
 }
 
-type Cart = {
-    title: string
-    unit_price: number
+export type Cart = {
+    name: string
+    unit_amount: number
     quantity: number
 }
 
 type Customer = {
     name: string
     email: string
-    adress: {
-        zip_code: string
-        street_name: string
+    tax_id: string
+}
+
+type Address = {
+        street: string
+        number: string
+        complement: string
+        locality: string
+        city: string
+        region_code: string
+        country: string
+        postal_code: string
+}
+
+type Card = {
+    number: string
+    exp_month: number
+    exp_year: number
+    security_code: string
+    holder: {
+        name: string
     }
 }
