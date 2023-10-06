@@ -35,7 +35,7 @@ export async function postPaymentData({cart, shipping, customer, address, card}:
                           type: "CREDIT_CARD",
                           installments: 1,
                           capture: true,
-                          soft_descriptor: "Loja Ânima"
+                          soft_descriptor: "Lojânima"
                         },
                         notification_urls: "https://webhook.site/#!/743c0d38-9982-4bc6-8c67-d924460bf1f1/e113c36e-dad5-4460-b56f-8173d70ccb64/1"
                       }

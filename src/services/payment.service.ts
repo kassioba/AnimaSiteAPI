@@ -32,7 +32,6 @@ export async function createPayment(body: Payment) {
     await storeCustomerData(payment.customer, payment.shipping.address, cart)
     // testar
 
-    console.log(new Date(2592000))
 
     return payment
 }
