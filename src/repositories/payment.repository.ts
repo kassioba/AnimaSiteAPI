@@ -1,16 +1,8 @@
 import axios from "axios";
 import { Payment } from "../protocols/Payment";
-import { paymentApiConfig } from "../utils/paymentApiConfig";
+import { prisma } from "../database/database.connection";
 
 export async function postPaymentData({cart, shipping, customer, address, card}: Payment, total: number){
-    console.log({items: [
-        ...cart,
-        {
-          ...shipping,
-          quantity: 1
-        }
-      ]})
-    
     return axios
             .post('https://sandbox.api.pagseguro.com/orders', {
                     customer,
@@ -58,15 +50,47 @@ export async function postPaymentData({cart, shipping, customer, address, card}:
                   
             )
             .then((resp) => {
-                console.log(resp.data)
                 return resp.data
             })
             .catch((err) => { 
-                console.log(err.response.data)
                 return err.response.data 
             });
 }
 
+export function createCustomer({ name, email, tax_id }){
+    return prisma.customer.create({
+        data: {
+            name,
+            email,
+            cpf: tax_id
+        }
+    })
+}
+
+export function createAddress(customer_id: number, { street, number, complement, locality , city, region_code, postal_code }){
+    return prisma.address.create({
+      data: {
+        customer_id,
+        street,
+        number,
+        complement,
+        neighborhood: locality,
+        city,
+        postal_code,
+        state_code: region_code
+      }
+    })
+}
+
+export function createOrder(customer_id: number, { stock_id, quantity }){
+    return prisma.order.create({
+      data: {
+        customer_id,
+        stock_id,
+        quantity
+      }
+    })
+}
 
 
 

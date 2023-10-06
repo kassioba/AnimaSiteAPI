@@ -2,9 +2,18 @@ import axios from "axios";
 
 export function getShippingPrice(cep: string) {
     return axios
-      .get(`https://www.cepcerto.com/ws/json-frete/52050480/${cep.replace('-', '')}/300/50/40/30`)
+      .post(`https://sandbox.melhorenvio.com.br/api/v2/me/shipment/calculate`, {
+        from: {postal_code: '52050480'},
+        to: {postal_code: `${cep}`}
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.MELHOR_ENVIO_API_ACESS_TOKEN}`
+        }
+      }
+      )
       .then((res) => {
-        return res.data;
+        return res;
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {return err});
   }

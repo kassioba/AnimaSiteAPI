@@ -8,8 +8,9 @@ export async function calculateShipping(req: Request, res: Response){
     try {
       res.send(await calculateShippingPrice(cep));
     } catch (err) {
-      if(err.message === "NotFoundError") return res.status(httpStatus.NOT_FOUND).send(err.message);
-      
+      if(err.name === "NotFoundError") return res.status(httpStatus.NOT_FOUND).send(err.message);
+      if(err.name === "ExternalRequestFailedError") return res.status(424).send(err.message);
+
       res.status(httpStatus.INTERNAL_SERVER_ERROR).send(err.message);
     }
   }

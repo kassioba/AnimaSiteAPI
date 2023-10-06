@@ -7,18 +7,19 @@ export type Payment = {
 }
 
 export type Cart = {
+    stock_id: number
     name: string
     unit_amount: number
     quantity: number
 }
 
-type Customer = {
+export type Customer = {
     name: string
     email: string
     tax_id: string
 }
 
-type Address = {
+export type Address = {
         street: string
         number: string
         complement: string

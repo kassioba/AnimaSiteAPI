@@ -5,3 +5,9 @@ export function findStockByProductId(productId: number){
         where: { product_id: productId }
     })
 }
+
+export function findStockById(id: number){
+    return prisma.stock.findUnique({
+        where: { id }
+    })
+}
