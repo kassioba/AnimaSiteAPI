@@ -3,7 +3,6 @@ import cors from 'cors'
 import dotenv from 'dotenv'
 import router from './routes/index.routes';
 import rateLimit from 'express-rate-limit';
-import axios from 'axios';
 
 const app = express();
 

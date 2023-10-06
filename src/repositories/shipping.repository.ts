@@ -8,7 +8,7 @@ export function getShippingPrice(cep: string) {
       },
       {
         headers: {
-          Authorization: `Bearer ${process.env.MELHOR_ENVIO_API_ACESS_TOKEN}`
+          Authorization: `Bearer ${process.env.MELHOR_ENVIO_API_ACCESS_TOKEN}`
         }
       }
       )

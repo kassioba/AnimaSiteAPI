@@ -10,7 +10,7 @@ const paymentSchema = Joi.object<Payment>({
     })).required(),
     customer: Joi.object({
         name: Joi.string().required(),
-        email: Joi.string().required(),
+        email: Joi.string().email().required(),
         tax_id: Joi.string().min(11).max(14).required()
     }).required(),
     address: Joi.object({
