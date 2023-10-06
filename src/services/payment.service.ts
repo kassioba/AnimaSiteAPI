@@ -2,8 +2,9 @@ import { createAddress, createCustomer, createOrder, postPaymentData } from "../
 import { Address, Cart, Customer, Payment } from "../protocols/Payment";
 import { externalRequestFailedError } from "../errors/externalRequestFailed.error";
 import { cardDeclinedError } from "../errors/cardDeclined.error";
-import { findStockById } from "../repositories/stock.repository";
 import { notFoundError } from "../errors/notFound.error";
+import { checkStock, updateStock } from "./stock.service";
+import { findStocksById } from "../repositories/stock.repository";
 
 
 export async function createPayment(body: Payment) {
@@ -13,7 +14,7 @@ export async function createPayment(body: Payment) {
 
     const stockCheck = await checkStock(cart)
 
-    if(stockCheck.length) throw notFoundError(`Product(s) ${stockCheck.join(', ')} out of stock`)
+    if(stockCheck) throw notFoundError(stockCheck)
 
     // Criptografar cartão
     const payment = await postPaymentData(body, total)
@@ -26,12 +27,10 @@ export async function createPayment(body: Payment) {
     }
 
     if(payment?.charges[0]?.status === "DECLINED") throw cardDeclinedError()
-
     
-    // testar
-    await storeCustomerData(payment.customer, payment.shipping.address, cart)
-    // testar
+    await updateStock(cart)
 
+    await storeCustomerData(payment.customer, payment.shipping.address, cart)
 
     return payment
 }
@@ -44,18 +43,6 @@ function calculateTotalInBRLCents({ cart, shipping }: Payment){
     if(shipping) total += shipping.unit_amount
 
     return total * 100
-}
-
-async function checkStock(cart: Cart[]){
-    const errors: string[] = [];
-
-    for (const item of cart) {
-        const check = await findStockById(item.stock_id)
-
-        if(!check.quantity) errors.push(item.name)
-    };
-
-    return errors
 }
 
 async function storeCustomerData(customerData: Customer, address: Address, cart: Cart[]){
