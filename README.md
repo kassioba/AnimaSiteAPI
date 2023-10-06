@@ -111,4 +111,5 @@ Aplicação Back-end voltada para a promoção e venda de produtos da banda pern
 
 - Implementar sistema de cadastro e login;
 - Criar sistema de acompanhamento dos pedidos para o vendedor (outro aplicativo, parecido com o do repositório: https://github.com/kassioba/Shopper-Teste-Front);
+- Testes automatizados;
 - Proxy reverso para reforçar a segurança da aplicação em produção.
