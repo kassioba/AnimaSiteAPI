@@ -1,6 +1,6 @@
 import axios from "axios";
 import { Payment } from "../protocols/Payment";
-import { prisma } from "../database/database.connection";
+import { prisma } from "../config/database";
 
 export async function postPaymentData({cart, shipping, customer, address, card}: Payment, total: number){
     return axios

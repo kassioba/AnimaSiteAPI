@@ -1,10 +1,12 @@
 import express, { Request, Response } from 'express'
 import cors from 'cors'
-import dotenv from 'dotenv'
 import router from './routes/index.routes';
 import rateLimit from 'express-rate-limit';
+import { loadEnv } from './config/envs';
 
 const app = express();
+
+loadEnv()
 
 app.set('trust proxy', true);
 
@@ -20,11 +22,8 @@ app.use(cors())
 .use(express.json())
 .use(router)
 .use(limiter)
-dotenv.config()
 
 app
-.get("/health", (req: Request, res: Response) => res.send("I'm okay!"))
+.get("/health", (req: Request, res: Response) => res.send("I'm okay!")) 
 
-const PORT = process.env.SERVER_PORT || 5000
-
-app.listen(PORT, () => console.log(`Server running on port ${PORT}!`));
+export default app

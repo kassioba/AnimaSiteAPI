@@ -1,4 +1,4 @@
-import { prisma } from "../database/database.connection";
+import { prisma } from "../config/database";
 
 export function findStockByProductId(productId: number){
     return prisma.stock.findMany({
