@@ -3,10 +3,10 @@ import httpStatus from "http-status";
 import { getStockByProductId } from "../services/stock.service"
 
 export async function getStock(req: Request, res: Response) {
-        const { productId } = req.params;
+        const { product_id } = req.params;
       
         try {
-            res.send(await getStockByProductId(+productId))
+            res.send(await getStockByProductId(+product_id))
         } catch (error) {
             if(error.name === "NotFoundError") return res.status(httpStatus.NOT_FOUND).send(error.message)
 

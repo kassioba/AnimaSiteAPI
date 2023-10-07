@@ -2,6 +2,7 @@ import app from 'app'
 import supertest from 'supertest'
 import { cleanDB } from '../helpers'
 import { createProduct } from '../factories/products.factory'
+import httpStatus from 'http-status'
 
 const server = supertest(app)
 
@@ -13,7 +14,7 @@ describe('GET /products', () => {
         
         expect(body).toHaveLength(0)
         expect(body).toEqual([])
-        expect(status).toBe(200)
+        expect(status).toBe(httpStatus.OK)
     })
 
     it('should respond with status 200 and products data', async () => {
@@ -35,15 +36,21 @@ describe('GET /products', () => {
                 updatedAt: expect.any(String)
             }
         ]))
-        expect(status).toBe(200)
+        expect(status).toBe(httpStatus.OK)
     })
 })
 
 describe('GET /products/:id', () => {
-    it('should respond with status 404 when no product is found', async () => {
-        const { status } = await server.get('/products/1')
+    it('should respond with status 400 when param is invalid', async () => {
+        const { status } = await server.get('/products/a')
 
-        expect(status).toBe(404)
+        expect(status).toBe(httpStatus.BAD_REQUEST)
+    })
+
+    it('should respond with status 404 when no product is found', async () => {
+        const { status } = await server.get('/products/2147483647')
+
+        expect(status).toBe(httpStatus.NOT_FOUND)
     })
 
     it('should respond with status 200 and product data', async () => {
@@ -51,7 +58,7 @@ describe('GET /products/:id', () => {
         
         const { status, body } = await server.get(`/products/${product.id}`)
 
-        expect(status).toBe(200)
+        expect(status).toBe(httpStatus.OK)
         expect(body).toEqual({
             ...product,
             createdAt: product.createdAt.toISOString(),

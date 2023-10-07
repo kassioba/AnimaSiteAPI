@@ -1,8 +1,8 @@
 import { prisma } from "../config/database";
 
-export function findStockByProductId(productId: number){
+export function findStockByProductId(product_id: number){
     return prisma.stock.findMany({
-        where: { product_id: productId }
+        where: { product_id }
     })
 }
 

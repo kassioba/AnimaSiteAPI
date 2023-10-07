@@ -5,6 +5,6 @@ import stockParamSchema from "../schemas/stockParam.schema";
 
 const stockRouter = Router()
 
-stockRouter.get("/:productId", validateSchema(stockParamSchema, "params"), getStock);
+stockRouter.get("/:product_id", validateSchema(stockParamSchema, "params"), getStock);
 
 export default stockRouter
