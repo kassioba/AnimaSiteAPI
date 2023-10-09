@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "@faker-js/faker": "^8.1.0",
-    "@prisma/client": "^5.3.1",
+    "@prisma/client": "^5.4.1",
     "@types/cors": "^2.8.14",
     "@types/express": "^4.17.18",
     "@types/http-status": "^1.1.2",
