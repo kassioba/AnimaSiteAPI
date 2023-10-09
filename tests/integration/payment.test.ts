@@ -58,7 +58,7 @@ describe('POST /payment', () => {
         expect(status).toBe(httpStatus.NOT_FOUND)
     })
 
-    it('should respond with status 424 when the external request fail', async () => {
+    it('should respond with status 503 when the external request fail', async () => {
         const { id } = await createProduct()
         const stock = await createStock(id, "M")
         
@@ -101,7 +101,7 @@ describe('POST /payment', () => {
 
         // Status code escrito de forma numérica devido a bug na biblioteca httpStatus
         // Status code written numerically due to a bug in the httpStatus library
-        expect(status).toBe(424)
+        expect(status).toBe(httpStatus.SERVICE_UNAVAILABLE)
     })
 
     it('should respond with status 402 when credit card is declined', async () => {
