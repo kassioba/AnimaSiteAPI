@@ -4,9 +4,20 @@
     "esModuleInterop": true,
     "module": "CommonJS",
     "moduleResolution": "Node",
-    "baseUrl": "src"
+    "baseUrl": "src",
+    "rootDirs": ["src", "tests"],
+    "paths": {
+      "@/*": ["*"]
+    },
+    "plugins": [
+      {
+        "transform": "typescript-transform-paths"
+      }
+    ]
   },
+  "include": ["src", "tests"],
   "ts-node": {
     "esm": true
   }
 }
+
