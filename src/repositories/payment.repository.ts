@@ -44,7 +44,7 @@ export async function postPaymentData({cart, shipping, customer, address, card}:
                 ,
                   {
                     headers: {
-                        Authorization: `Bearer ${process.env.PAGSEGURO_TOKEN}`
+                        Authorization: `Bearer ${process.env.PAGBANK_TOKEN}`
                     }
                   }
                   
