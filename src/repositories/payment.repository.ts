@@ -67,21 +67,6 @@ export function createCustomer({ name, email, tax_id }){
     })
 }
 
-export function createAddress(customer_id: number, { street, number, complement, locality , city, region_code, postal_code }){
-    return prisma.address.create({
-      data: {
-        customer_id,
-        street,
-        number,
-        complement,
-        neighborhood: locality,
-        city,
-        postal_code,
-        state_code: region_code
-      }
-    })
-}
-
 export function createOrder(customer_id: number, { stock_id, quantity }){
     return prisma.order.create({
       data: {

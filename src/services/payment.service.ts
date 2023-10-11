@@ -1,10 +1,10 @@
-import { createAddress, createCustomer, createOrder, postPaymentData } from "../repositories/payment.repository";
+import { createCustomer, createOrder, postPaymentData } from "../repositories/payment.repository";
 import { Address, Cart, Customer, Payment } from "../protocols/Payment";
 import { externalRequestFailedError } from "../errors/externalRequestFailed.error";
 import { cardDeclinedError } from "../errors/cardDeclined.error";
 import { notFoundError } from "../errors/notFound.error";
 import { checkStock, updateStock } from "./stock.service";
-import { findStocksById } from "../repositories/stock.repository";
+import { createAddress } from "../repositories/address.repository";
 
 
 export async function createPayment(body: Payment) {
