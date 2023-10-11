@@ -71,6 +71,24 @@ Aplicação Back-end voltada para a promoção e venda de produtos da banda pern
 
   - Status: 200 (OK)
 
+- GET /address/:cep
+    - Param: { cep: string }
+
+    - Response: {
+      "cep": string,
+      "logradouro": string,
+      "complemento": string,
+      "bairro": string,
+      "localidade": string,
+      "uf": string,
+      "ibge": string,
+      "gia": string,
+      "ddd": string,
+      "siafi": string
+    }
+
+    - Status: 200 (OK)
+
 - POST /shipping
     - Body: { cep: string }
 
