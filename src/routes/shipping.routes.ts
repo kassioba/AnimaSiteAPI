@@ -3,8 +3,8 @@ import { calculateShipping } from "../controllers/shipping.controller";
 import { Router } from "express";
 import cepSchema from "../schemas/cep.schema";
 
-const cargoRouter = Router()
+const shippingRouter = Router()
 
-cargoRouter.post("", validateSchema(cepSchema, "body"), calculateShipping);
+shippingRouter.post("", validateSchema(cepSchema, "body"), calculateShipping);
 
-export default cargoRouter
+export default shippingRouter
