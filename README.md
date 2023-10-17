@@ -12,6 +12,7 @@ Aplicação Back-end voltada para a promoção e venda de produtos da banda pern
 - Jest
 - API PagBank
 - API Melhor Envio
+- API ViaCEP
 
 ## Setup
 
