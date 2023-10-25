@@ -1,12 +1,12 @@
 import { validateSchema } from "../middlewares/validateSchema.middleware";
 import { getProducts, getProduct } from "../controllers/products.controller";
 import { Router } from "express";
-import { productParamSchema } from "../schemas/productParam.schema";
+import { idParamSchema } from "../schemas/idParam.schema";
 
 const productsRouter = Router()
 
 productsRouter
 .get("", getProducts)
-.get("/:id", validateSchema(productParamSchema, "params"), getProduct);
+.get("/:id", validateSchema(idParamSchema, "params"), getProduct);
 
 export default productsRouter

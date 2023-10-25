@@ -1,5 +1,5 @@
 import Joi from "joi";
 
-export const productParamSchema = Joi.object({
+export const idParamSchema = Joi.object({
     id: Joi.number().positive()
 })
