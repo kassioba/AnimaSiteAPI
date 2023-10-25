@@ -57,16 +57,6 @@ export async function postPaymentData({cart, shipping, customer, address, card}:
             });
 }
 
-export function createCustomer({ name, email, tax_id }){
-    return prisma.customer.create({
-        data: {
-            name,
-            email,
-            cpf: tax_id
-        }
-    })
-}
-
 export function createOrder(customer_id: number, { stock_id, quantity }){
     return prisma.order.create({
       data: {

@@ -21,3 +21,13 @@ export function findCustomerWithOrderById(id: number){
         }
     })
 }
+
+export function createCustomer({ name, email, tax_id }){
+    return prisma.customer.create({
+        data: {
+            name,
+            email,
+            cpf: tax_id
+        }
+    })
+}
