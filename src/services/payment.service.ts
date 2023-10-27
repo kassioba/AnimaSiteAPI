@@ -1,11 +1,10 @@
-import { createOrder, postPaymentData } from "../repositories/payment.repository";
-import { Address, Cart, Customer, Payment } from "../protocols/Payment";
+import { postPaymentData } from "../repositories/payment.repository";
+import { Payment } from "../protocols/Payment";
 import { externalRequestFailedError } from "../errors/externalRequestFailed.error";
 import { cardDeclinedError } from "../errors/cardDeclined.error";
 import { notFoundError } from "../errors/notFound.error";
 import { checkStock, updateStock } from "./stock.service";
-import { createAddress } from "../repositories/address.repository";
-import { createCustomer } from "../repositories/customer.repository";
+import { storeCustomerData } from "./customer.service";
 
 
 export async function createPayment(body: Payment) {
@@ -46,12 +45,3 @@ function calculateTotalInBRLCents({ cart, shipping }: Payment){
     return total * 100
 }
 
-async function storeCustomerData(customerData: Customer, address: Address, cart: Cart[]){
-    const customer = await createCustomer(customerData)
-
-    await createAddress(customer.id, address)
-
-    for (const item of cart){
-        await createOrder(customer.id, item)
-    }
-}

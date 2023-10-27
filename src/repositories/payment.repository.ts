@@ -56,13 +56,3 @@ export async function postPaymentData({cart, shipping, customer, address, card}:
                 return err.response.data 
             });
 }
-
-export function createOrder(customer_id: number, { stock_id, quantity }){
-    return prisma.order.create({
-      data: {
-        customer_id,
-        stock_id,
-        quantity
-      }
-    })
-}

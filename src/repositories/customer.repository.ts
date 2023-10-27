@@ -31,3 +31,13 @@ export function createCustomer({ name, email, tax_id }){
         }
     })
 }
+
+export function createOrder(customer_id: number, { stock_id, quantity }){
+    return prisma.order.create({
+      data: {
+        customer_id,
+        stock_id,
+        quantity
+      }
+    })
+}
